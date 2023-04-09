@@ -11,6 +11,8 @@ public class MyStepdefs {
     private int value1;
     private int value2;
     private int result;
+    private double doubleResult;
+    private String opt;
 
     @Before
     public void before() {
@@ -33,6 +35,29 @@ public class MyStepdefs {
     @Then("^I expect the result (-?\\d+)$")
     public void iExpectTheResult(int arg0) {
         Assert.assertEquals(arg0, result);
+    }
 
+    @Then("^I expect the result to be (.+)$")
+    public void iExpectTheResultToBeResult(String result) {
+        if (result.equalsIgnoreCase("nan"))
+            Assert.assertEquals(Double.NaN, doubleResult, 0.0001);
+        else {
+            double num = Double.parseDouble(result);
+            Assert.assertEquals(num, doubleResult, 0.0001);
+        }
+    }
+
+    @When("^I evaluate$")
+    public void iEvaluate() {
+        if (opt.equals("rvs"))
+            doubleResult = calculator.reverse(value1);
+        else
+            doubleResult = calculator.sqrt(value1);
+    }
+
+    @Given("^One input value and opt, ([-+]?\\d+) (rvs|sqr)$")
+    public void oneInputValueAndOptNumberOpt(int arg0, String arg1) {
+        value1 = arg0;
+        opt = arg1;
     }
 }
